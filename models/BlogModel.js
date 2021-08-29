@@ -10,7 +10,8 @@ const blogSchema = new mongoose.Schema({
 
      description:{
           type:String,
-          required:[true, 'Blog must have description']
+          required:[true, 'Blog must have description'],
+          minlength:[50, 'Description must be 50 charcater lon']
      },
 
      createdAt:{
@@ -20,9 +21,11 @@ const blogSchema = new mongoose.Schema({
 
      tag:{
           type:String,
-          required:[true, 'Tag is required']
+          required:[true, 'Tag is required'],
+          minlength:[3, 'Tag must be three character long']
      }
-},{
+},
+{
      toJSON: { virtuals: true },
      toObject: { virtuals: true }
 })
