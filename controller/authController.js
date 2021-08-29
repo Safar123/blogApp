@@ -1,7 +1,7 @@
 const User = require('../models/UserModel');
 const catchAsync = require('./../middleware/asyncErrorHandler');
 const {userSchemaValidation}= require('./../middleware/joiValidation');
-const sendJwtToken =require('./../utils/jwtHandler');
+const {sendJwtToken, verifyToken} =require('./../utils/jwtHandler');
 const ApiError = require('./../ClassHandler/ErrorClass');
 
 exports.signUpUser = catchAsync(async (req, res, next) => {
@@ -47,4 +47,28 @@ exports.logInUser = catchAsync(async(req, res, next)=>{
           return next(new ApiError(`Email or password didn't matched`))
      }
      sendJwtToken(user, 200, res)
+})
+
+exports.protectRoute = catchAsync(async (req, res, next)=>{
+     let token;
+     
+     //?setting authorization headers and initial of headers
+     if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+          token = req.headers.authorization.split(' ')[1]
+     }
+     //?testing if user is logged in and has token
+     if(!token){
+          return next(new ApiError ('You need to login to access this route', 401))
+     }
+     //?verifiying token 
+     const decoded = await verifyToken(token);
+
+     //?check user still exist
+     const existingUser = await User.findById(decoded.id)
+     if(!existingUser){
+          return next(new ApiError('User with bearer token exist no longer', 401))
+     }
+     req.user=existingUser;
+     next();
+
 })
