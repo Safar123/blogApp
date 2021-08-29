@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt')
+
 
 const userSchema = new mongoose.Schema({
      name:{
@@ -15,7 +17,8 @@ const userSchema = new mongoose.Schema({
      password:{
           type:String,
           required:[true, 'Please set password'],
-          minlength:[8, 'Password must be 8 character long']
+          minlength:[8, 'Password must be 8 character long'],
+          select:false
      },
      confirmPassword:{
           type:String,
@@ -31,6 +34,14 @@ const userSchema = new mongoose.Schema({
          default:'user'
     }
 })
+
+userSchema.pre('save', async function(next){
+     if(!this.isModified('password')) return next();
+     this.password = await bcrypt.hash(this.password, 12);
+     this.confirmPassword = undefined;
+     next();
+})
+
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
