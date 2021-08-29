@@ -101,6 +101,4 @@ exports.updateBlog = catchAsync (async (req, res, next)=>{
                   }
              }) 
          }     
-
-     
 })
