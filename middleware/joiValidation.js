@@ -1,4 +1,5 @@
 const Joi = require('@hapi/joi')
+Joi.objectId = require('joi-objectid')(Joi)
 
 function userSchemaValidation(data) {
 
@@ -14,7 +15,17 @@ function userSchemaValidation(data) {
 return schema.validate(data)
 }
 
+function blogSchemaValidation(data){
 
+    const schema = Joi.object({
+    title:Joi.string().required().min(10).max(75),
+    description:Joi.string().required().min(25),
+    tag:Joi.string().required()
+    })
+
+    return schema.validate(data)
+}
 module.exports ={
-     userSchemaValidation
+     userSchemaValidation,
+     blogSchemaValidation
 }
