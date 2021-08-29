@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const {promisify} = require('util')
 
 const jwtGenerateToken = id =>{
     return jwt.sign({id}, process.env.JWT_SECRET_STRING,{
@@ -27,4 +28,9 @@ const sendJwtToken = (user, statusCode, res)=>{
      })
 
 }
-module.exports = sendJwtToken;
+const verifyToken =async (token)=>{
+     
+     const decodeAndVerifyToken = await promisify(jwt.verify)(token, process.env.JWT_SECRET_STRING)
+     return decodeAndVerifyToken;
+}
+module.exports = {sendJwtToken, verifyToken}
