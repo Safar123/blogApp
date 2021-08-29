@@ -35,8 +35,9 @@ exports.createBlog = catchAsync(async (req,res, next)=>{
 exports.getAllBlog = catchAsync(async (req, res, next)=>{
 
      const blogList = await Blog.find();
-     if(!blogList){
-         return next(new ApiError('No document yet', 200))
+     if(blogList.length===0){
+
+         return next(new ApiError('No document yet', 404))
      }
      else {
           res.status(200).json({
