@@ -2,6 +2,7 @@ const User = require('../models/UserModel');
 const catchAsync = require('./../middleware/asyncErrorHandler');
 const {userSchemaValidation}= require('./../middleware/joiValidation');
 const sendJwtToken =require('./../utils/jwtHandler');
+const ApiError = require('./../ClassHandler/ErrorClass');
 
 exports.signUpUser = catchAsync(async (req, res, next) => {
 
@@ -31,4 +32,19 @@ exports.signUpUser = catchAsync(async (req, res, next) => {
                }
           }
      }
+})
+
+exports.logInUser = catchAsync(async(req, res, next)=>{
+     const {email, password} = req.body;
+     if(!email || !password){
+          return next (new ApiError('Email and password is required field', 400 ))
+     }
+
+     const user = await User.findOne({email}).select('+password');
+
+     if(!user || ! await user.checkPasswordValid(password, user.password))
+     {
+          return next(new ApiError(`Email or password didn't matched`))
+     }
+     sendJwtToken(user, 200, res)
 })
