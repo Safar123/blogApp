@@ -4,7 +4,7 @@ const blogController = require('./../controller/blogController')
 const authController= require('./../controller/authController')
 
 blogRouter.route('/')
-.post(authController.protectRoute, blogController.createBlog)
+.post(authController.protectRoute, blogController.setUserID ,blogController.createBlog)
 .get(blogController.getAllBlog);
 
 blogRouter.route('/:id')
