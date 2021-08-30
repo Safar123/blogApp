@@ -23,6 +23,11 @@ const blogSchema = new mongoose.Schema({
           type:String,
           required:[true, 'Tag is required'],
           minlength:[3, 'Tag must be three character long']
+     },
+
+     user:{
+          type:mongoose.Schema.ObjectId,
+          ref:'User'
      }
 },
 {
@@ -32,6 +37,14 @@ const blogSchema = new mongoose.Schema({
 
 blogSchema.virtual('wordCount').get(function(next){
      return this.description.split(' ').length;
+     next()
+})
+
+blogSchema.pre(/^find/ , function(next){
+    this.populate({
+         path:'user',
+         select:'name userImage'
+    })
      next()
 })
 
