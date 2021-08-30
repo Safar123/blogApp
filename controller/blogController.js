@@ -1,23 +1,20 @@
 const Blog = require('./../models/BlogModel');
 const catchAsync = require('./../middleware/asyncErrorHandler');
 const ApiError = require('./../ClassHandler/ErrorClass');
-const {blogSchemaValidation} = require('./../middleware/joiValidation');
 
+exports.setUserID = (req, res, next)=>{
+if(!req.body.user) req.body.user = req.user.id;
+next();
+}
 
 exports.createBlog = catchAsync(async (req,res, next)=>{
 
-     const {error, value} = await blogSchemaValidation(req.body);
-     if(error){
-          const message= error.details[0].message
-          return next (new ApiError(message, 422))
-     }
-     else if (value){
           const blog = await Blog.create({
                title:req.body.title,
                description:req.body.description,
-               tag:req.body.tag
-          })
-    
+               tag:req.body.tag,
+               user:req.body.user
+          })  
           if(blog){
                res.status(201).json({
                     success:true,
@@ -28,8 +25,7 @@ exports.createBlog = catchAsync(async (req,res, next)=>{
           }
           else{
                return next (new ApiError(' Something went wrong creating document', 500))
-          }
-     }   
+          }   
 })
 
 exports.getAllBlog = catchAsync(async (req, res, next)=>{
