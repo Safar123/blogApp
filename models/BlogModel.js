@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const slugify = require('slugify')
 const blogSchema = new mongoose.Schema({
      title:{
           type:String,
@@ -28,6 +28,9 @@ const blogSchema = new mongoose.Schema({
      user:{
           type:mongoose.Schema.ObjectId,
           ref:'User'
+     },
+     slug:{
+          type:String
      }
 },
 {
@@ -45,6 +48,10 @@ blogSchema.pre(/^find/ , function(next){
          path:'user',
          select:'name userImage'
     })
+     next()
+})
+blogSchema.pre('save', function(next){
+     this.slug= slugify(this.title)
      next()
 })
 
