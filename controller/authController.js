@@ -72,3 +72,17 @@ exports.protectRoute = catchAsync(async (req, res, next)=>{
      next();
 
 })
+
+exports.updatePassword = catchAsync(async (req,res, next)=>{
+
+     const user = await User.findById(req.user.id).select('+password')
+     if(!user){
+       return next(new ApiError('No user is currently logged in', 400))
+     }
+     if(!(await user.checkPasswordValid(req.body.currentPassword, user.password))){
+      return next (new ApiError('Your current password didnt match. Try again or reset your password', 400))
+     }
+     user.password = req.body.currentPassword;
+     user.confirmPassword= req.body.confirmPassword;
+     sendJwtToken(user, 200, res)
+})
