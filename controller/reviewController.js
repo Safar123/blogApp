@@ -5,6 +5,8 @@ const ApiError = require('./../ClassHandler/ErrorClass')
 exports.addReview = catchAsync(async (req,res,next)=>{
    
      if(!req.body.user) req.body.user = req.user.id;
+     if(!req.body.blog) req.body.blog = req.params.blogId;
+     
      const newReview = await Review.create(req.body);
      if(!newReview){
           return next(new ApiError('Something went wrong while creating reviews', 500))
