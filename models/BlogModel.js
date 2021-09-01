@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const slugify = require('slugify')
+const slugify = require('slugify');
+
 const blogSchema = new mongoose.Schema({
      title:{
           type:String,
@@ -40,7 +41,7 @@ const blogSchema = new mongoose.Schema({
 
 blogSchema.virtual('wordCount').get(function(next){
      return this.description.split(' ').length;
-     next()
+     next();
 })
 
 blogSchema.pre(/^find/ , function(next){
